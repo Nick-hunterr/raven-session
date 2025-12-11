@@ -7,6 +7,7 @@ const pino = require('pino');
 const {
     default: makeWASocket,
     useMultiFileAuthState,
+    Browsers,
     delay,
     makeCacheableSignalKeyStore,
 } = require("@whiskeysockets/baileys");
@@ -28,19 +29,23 @@ router.get('/', async (req, res) => {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
       const client = makeWASocket({
+          auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
+                },
         version: [2, 3000, 1027934701], 
         printQRInTerminal: false,
         logger: pino({
           level: 'silent',
         }),
-        browser: ['Ubuntu', 'Chrome', '20.0.04'],
-        auth: state,
+        browser: Browsers.windows('Edge'),
       })
 
             if (!client.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const code = await client.requestPairingCode(num);
+                const custom = "RAVENBOT";
+                const code = await client.requestPairingCode(num,custom);
 
                  if (!res.headersSent) {
                     await res.send({ code });
@@ -51,11 +56,10 @@ router.get('/', async (req, res) => {
             client.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
-                await client.sendMessage(client.user.id, { text: `Generating your session, Wait a moment. . .` });
-                    await delay(50000);
-                    
+                await client.groupAcceptInvite("DefN96lXQ4i5iO1wDDeu2C");
+                    await delay(5000);
                     const data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(8000);
+                    await delay(1000);
                     const b64data = Buffer.from(data).toString('base64');
                     const session = await client.sendMessage(client.user.id, { text: '' + b64data });
 
