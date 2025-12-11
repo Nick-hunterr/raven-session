@@ -7,7 +7,6 @@ const pino = require('pino');
 const {
     default: makeWASocket,
     useMultiFileAuthState,
-    Browsers,
     delay,
     makeCacheableSignalKeyStore,
 } = require("@whiskeysockets/baileys");
@@ -29,12 +28,12 @@ router.get('/', async (req, res) => {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
       const client = makeWASocket({
-       version: [2, 3000, 1027934701], 
+        version: [2, 3000, 1027934701], 
         printQRInTerminal: false,
         logger: pino({
           level: 'silent',
         }),
-        browser: Browsers.windows('Edge'),
+        browser: ['Ubuntu', 'Chrome', '20.0.04'],
         auth: state,
       })
 
