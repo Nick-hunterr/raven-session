@@ -7,7 +7,7 @@ const pino = require('pino');
 const {
     default: makeWASocket,
     useMultiFileAuthState,
-    fetchLatestBaileysVersion,
+    Browsers,
     delay,
     makeCacheableSignalKeyStore,
 } = require("@whiskeysockets/baileys");
@@ -26,16 +26,15 @@ router.get('/', async (req, res) => {
     let num = req.query.number;
 
     async function RAVEN() {
-        const { version } = await fetchLatestBaileysVersion();
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
       const client = makeWASocket({
-        version,
+       version: [2, 3000, 1027934701], 
         printQRInTerminal: false,
         logger: pino({
           level: 'silent',
         }),
-        browser: ['Ubuntu', 'Chrome', '20.0.04'],
+        browser: Browsers.windows('Edge'),
         auth: state,
       })
 
